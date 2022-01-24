@@ -2,23 +2,31 @@ package main
 
 import (
 	"GOOauth/Auth"
+	"GOOauth/Utils"
+	"encoding/json"
 	"fmt"
 	"net/http"
 )
 
 func main() {
 
-	http.HandleFunc("/", handler)
+	http.HandleFunc("/", mainHandler)
+	http.HandleFunc("/auth", authHandler)
 	err := http.ListenAndServe(":8080", nil)
-	if err != nil {
-		fmt.Println(err)
-		return
-	}
+	Utils.CheckAndDie(err)
 
 }
 
-func handler(w http.ResponseWriter, r *http.Request) {
-	var a = Auth.Authenticate()
-	fmt.Println(a)
-	fmt.Fprintf(w, "Hi there, I love %s!", r.URL.Path[1:])
+func authHandler(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-type", "application/json;charset=UTF-8")
+	w.WriteHeader(http.StatusOK)
+	authenticate := Auth.Authenticate(r)
+	json.NewEncoder(w).Encode(authenticate)
+	//Utils.CheckAndWarn(err)
+
+}
+
+func mainHandler(w http.ResponseWriter, r *http.Request) {
+
+	fmt.Fprintf(w, "ping")
 }
