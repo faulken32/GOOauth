@@ -1,15 +1,15 @@
 package dto
 
-type AuthResponse struct {
+type Response struct {
 	AccessToken  string `json:"accessToken"`
 	RefreshToken string `json:"refreshToken"`
 }
 
-// New
+// NewResponse
 // create access token
-func New(accessToken string, refreshToken string) AuthResponse {
+func NewResponse(accessToken string, refreshToken string) Response {
 
-	return AuthResponse{
+	return Response{
 		accessToken, refreshToken,
 	}
 

@@ -1,15 +1,17 @@
 package Utils
 
-import "fmt"
+import (
+	"log"
+)
 
 func CheckAndDie(e error) {
 	if e != nil {
-		panic(e)
+		log.Fatal(e)
 	}
 }
 
 func CheckAndWarn(e error) {
 	if e != nil {
-		fmt.Println(e)
+		log.Println(e)
 	}
 }

@@ -1,8 +1,8 @@
 package main
 
 import (
-	"GOOauth/Auth"
 	"GOOauth/Utils"
+	"GOOauth/auth"
 	"encoding/json"
 	"fmt"
 	"net/http"
@@ -18,11 +18,28 @@ func main() {
 }
 
 func authHandler(w http.ResponseWriter, r *http.Request) {
+
 	w.Header().Set("Content-type", "application/json;charset=UTF-8")
-	w.WriteHeader(http.StatusOK)
-	authenticate := Auth.Authenticate(r)
-	json.NewEncoder(w).Encode(authenticate)
-	//Utils.CheckAndWarn(err)
+
+	encoder := json.NewEncoder(w)
+	success, errorResponse := auth.Authenticate(r)
+	if errorResponse.HttpStatus != 0 {
+
+		err := encoder.Encode(errorResponse)
+		if errorResponse.HttpStatus == 401 {
+			w.WriteHeader(http.StatusForbidden)
+		}
+		if errorResponse.HttpStatus == 400 {
+			w.WriteHeader(http.StatusBadRequest)
+		}
+
+		Utils.CheckAndWarn(err)
+
+	} else {
+		//w.WriteHeader(http.StatusOK)
+		err := encoder.Encode(success)
+		Utils.CheckAndWarn(err)
+	}
 
 }
 
