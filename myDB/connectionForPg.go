@@ -1,19 +1,26 @@
 package myDB
 
 import (
-	"github.com/go-pg/pg"
+	"GOOauth/Utils"
+	"database/sql"
+	"github.com/uptrace/bun"
+	"github.com/uptrace/bun/dialect/pgdialect"
+	"github.com/uptrace/bun/driver/pgdriver"
 )
 
-func Connect() *pg.DB {
-	db := pg.Connect(&pg.Options{
-		User:     "postgres",
-		Password: "password",
-	})
+func InitDb() *bun.DB {
+
+	dsn := "postgres://postgres:password@localhost:5432/postgres?sslmode=disable"
+	sqlDb := sql.OpenDB(pgdriver.NewConnector(pgdriver.WithDSN(dsn)))
+	db := bun.NewDB(sqlDb, pgdialect.New())
 
 	return db
 }
 
-func Close(db *pg.DB) {
+func Close(db *bun.DB) {
 
-	defer db.Close()
+	defer func(db *bun.DB) {
+		err := db.Close()
+		Utils.CheckAndWarn(err)
+	}(db)
 }
