@@ -3,6 +3,7 @@ package main
 import (
 	"GOOauth/Utils"
 	"GOOauth/auth"
+	"GOOauth/users"
 	"encoding/json"
 	"fmt"
 	"net/http"
@@ -12,6 +13,7 @@ func main() {
 
 	http.HandleFunc("/", mainHandler)
 	http.HandleFunc("/auth", authHandler)
+	http.HandleFunc("/private/user/create", userHandler)
 	err := http.ListenAndServe(":8080", nil)
 	Utils.CheckAndDie(err)
 
@@ -40,6 +42,18 @@ func authHandler(w http.ResponseWriter, r *http.Request) {
 		err := encoder.Encode(success)
 		Utils.CheckAndWarn(err)
 	}
+
+}
+
+func userHandler(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-type", "application/json;charset=UTF-8")
+
+	userCreationRequest := users.UserCreationRequest{}
+
+	j := json.NewDecoder(r.Body)
+	err := j.Decode(&userCreationRequest)
+	// TODO  check token from user super admin
+	Utils.CheckAndWarn(err)
 
 }
 
