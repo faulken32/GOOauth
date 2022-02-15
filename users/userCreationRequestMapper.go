@@ -21,6 +21,8 @@ func mapIt(request UserCreationRequest) {
 			if requestType.Field(i).Name == userType.Field(j).Name {
 				log.Println("it's a match ")
 				log.Println(requestType.Field(i).Name)
+				log.Println("for value {}", requestValue.Field(i).Interface())
+				userValue.Field(j).Interface()
 			}
 		}
 	}

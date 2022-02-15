@@ -5,11 +5,11 @@ import "testing"
 func TestMapIt(t *testing.T) {
 
 	request := UserCreationRequest{
-		Login:    "login",
-		Name:     "Name",
-		Email:    "Email",
+		Login:    "nicolas",
+		Name:     "nicolas",
+		Email:    "nico@",
 		Realm:    "realm",
-		Password: "password",
+		Password: "pass",
 	}
 
 	mapIt(request)
