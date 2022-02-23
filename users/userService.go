@@ -1,6 +1,7 @@
 package users
 
 import (
+	"GOOauth/Error"
 	"GOOauth/Utils"
 	"GOOauth/myDB"
 	"context"
@@ -10,7 +11,8 @@ import (
 )
 
 type UserService interface {
-	CreateOne() (*UserDb, *UserError)
+	CreateOne() (*UserDb, *Error.UserError)
+	ToJson()
 }
 
 // UserDb
@@ -21,6 +23,8 @@ type UserDb struct {
 	Login         string `bun:"login,unique"`
 	Name          string `bun:"name,unique"`
 	Email         string `bun:"email,unique"`
+	Password      string `bun:"password"`
+	Realm         string `bun:"realm"`
 }
 
 func NewUserDbNoId(login string, name string, email string) *UserDb {
@@ -40,14 +44,14 @@ func (u UserDb) ToJson() {
 
 // CreateOne
 // create one user in db
-func (u UserDb) CreateOne() (*UserDb, *UserError) {
+func (u UserDb) CreateOne() (*UserDb, *Error.UserError) {
 
 	ctx, db, err := u.createTable()
 
 	result, err := db.NewInsert().Model(&u).Exec(ctx)
 	if err != nil {
-		log.Println(err)
-		return nil, NewUserError("error from db", err)
+
+		return nil, Error.NewUserError(err)
 	}
 
 	log.Println("created user table", result)

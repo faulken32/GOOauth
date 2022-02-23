@@ -3,12 +3,13 @@ package users
 import (
 	"GOOauth/myDB"
 	"context"
+	"github.com/stretchr/testify/assert"
 	"log"
 	"testing"
 )
 
 func truncateTable() {
-	log.Println("prepare test for user crud")
+	log.Println("prepare test for user crud ----- TRUNCATE USER TABLE -------")
 
 	db := myDB.InitDb()
 	u := UserDb{}
@@ -19,7 +20,6 @@ func truncateTable() {
 	}
 
 }
-
 func TestCreateOne(t *testing.T) {
 	truncateTable()
 	log.Println("start test db insert")
@@ -34,10 +34,12 @@ func TestCreateOne(t *testing.T) {
 	if userError != nil {
 		userError.ToJson()
 	}
+
 	noId = NewUserDbNoId("nicolas", "nicolas", "nicolas")
-	_, u := noId.CreateOne()
-	if u.Error != nil {
-		u.ToJson()
+	_, err := noId.CreateOne()
+	assert.NotNil(t, err, "assert duplicate user creation")
+	if err != nil {
+		err.ToJson()
 	}
 
 }
