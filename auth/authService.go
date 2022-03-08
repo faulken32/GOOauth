@@ -9,9 +9,27 @@ import (
 	"net/http"
 )
 
+type JWTMaker struct {
+	secretKey string
+}
+
 type customClaims struct {
 	Username string `json:"username"`
 	jwt.StandardClaims
+}
+
+// token validation
+func valid(token string) {
+	maker := JWTMaker{secretKey: "secureSecretText"}
+
+	keyFunc := func(token *jwt.Token) (interface{}, error) {
+		_, ok := token.Method.(*jwt.SigningMethodHMAC)
+		if !ok {
+			return nil, nil
+		}
+		return []byte(maker.secretKey), nil
+	}
+	jwt.Parse(token, keyFunc)
 }
 
 // create a jwt token

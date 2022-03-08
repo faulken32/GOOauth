@@ -32,7 +32,7 @@ func Test_userHandler(t *testing.T) {
 	body := &users.UserCreationRequest{
 		Login:    "nicolas",
 		Name:     "canicatti",
-		Email:    "",
+		Email:    "canicatti.eee@aaaaa.com",
 		Realm:    "",
 		Password: "",
 	}
@@ -46,4 +46,13 @@ func Test_userHandler(t *testing.T) {
 	result := w.Result()
 	log.Println(result.StatusCode)
 	assert.Equal(t, 201, result.StatusCode)
+
+	r, _ = http.NewRequest("GET", "/private/user/create", buffer)
+	w = httptest.NewRecorder()
+
+	userHandler(w, r)
+	result = w.Result()
+	log.Println(result.StatusCode)
+	assert.Equal(t, 500, result.StatusCode)
+
 }
