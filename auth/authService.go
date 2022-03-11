@@ -7,6 +7,7 @@ import (
 	"encoding/json"
 	"github.com/golang-jwt/jwt"
 	"net/http"
+	"time"
 )
 
 type JWTMaker struct {
@@ -19,7 +20,7 @@ type customClaims struct {
 }
 
 // token validation
-func valid(token string) {
+func valid(token string) (bool, error) {
 	maker := JWTMaker{secretKey: "secureSecretText"}
 
 	keyFunc := func(token *jwt.Token) (interface{}, error) {
@@ -29,16 +30,24 @@ func valid(token string) {
 		}
 		return []byte(maker.secretKey), nil
 	}
-	jwt.Parse(token, keyFunc)
+	parse, err := jwt.Parse(token, keyFunc)
+
+	if err != nil {
+		return false, err
+	}
+	if parse.Valid {
+		return true, nil
+	}
+	return false, err
 }
 
 // create a jwt token
 func createToken(user string) string {
-
+	expirationTime := time.Now().Add(5 * time.Minute)
 	claims := customClaims{
 		Username: user,
 		StandardClaims: jwt.StandardClaims{
-			ExpiresAt: 15000,
+			ExpiresAt: expirationTime.Unix(),
 			Issuer:    "nameOfWebsiteHere",
 		},
 	}
@@ -67,11 +76,8 @@ func Authenticate(request *http.Request) (dto.Response, dto.ErrorResponse) {
 	}
 
 	fromRequest := users.NewFromRequest(authRequest)
-
 	var response dto.Response
-
 	if fromRequest.AsRightOn(authRequest.Realm) {
-
 		j := json.NewDecoder(request.Body)
 		err := j.Decode(&authRequest)
 		Utils.CheckAndWarn(err)
@@ -79,7 +85,6 @@ func Authenticate(request *http.Request) (dto.Response, dto.ErrorResponse) {
 		response = dto.NewResponse(token, "")
 		return response, dto.ErrorResponse{}
 	} else {
-
 		return dto.Response{}, dto.ErrorResponse{
 			HttpStatus:   403,
 			ErrorMessage: "You don't have right on reaml",
