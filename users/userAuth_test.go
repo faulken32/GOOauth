@@ -16,7 +16,7 @@ func TestAsRightOn(t *testing.T) {
 }
 
 func TestNewFromRequest(t *testing.T) {
-	r := dto.Request{
+	r := dto.AuthRequest{
 		Login:    "",
 		Password: "",
 		Realm:    "",

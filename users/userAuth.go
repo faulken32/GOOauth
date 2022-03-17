@@ -17,19 +17,22 @@ type User struct {
 	Realm    string
 }
 
+// AsRightOn check is user as right on a realm
 func (u User) AsRightOn(realm string) bool {
 
 	log.Println(u)
 	log.Println(realm)
+	//oneByLogin := GetOneByLogin(u.Login)
 
 	return true
 }
 
-func New() *User {
-	return &User{}
-}
+//func New() *User_id {
+//	return &User_id{}
+//}
 
-func NewFromRequest(request dto.Request) User {
+//NewFromRequest create a user from an AuthRequest
+func NewFromRequest(request dto.AuthRequest) User {
 
 	return User{
 		Login:    request.Login,

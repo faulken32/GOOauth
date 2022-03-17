@@ -3,16 +3,16 @@ package dto
 import "GOOauth/Error"
 
 type RequestValidator interface {
-	Validator(request Request) *Error.InvalidAuthRequest
+	Validator(request AuthRequest) *Error.InvalidAuthRequest
 }
 
-type Request struct {
+type AuthRequest struct {
 	Login    string
 	Password string
 	Realm    string
 }
 
-func (r Request) Validator(request Request) *Error.InvalidAuthRequest {
+func (r AuthRequest) Validator(request AuthRequest) *Error.InvalidAuthRequest {
 	if request.Login == "" {
 
 		return Error.NewInvalidAuthRequest(0, Error.MissingLogin)
@@ -30,6 +30,6 @@ func (r Request) Validator(request Request) *Error.InvalidAuthRequest {
 	return nil
 }
 
-func NewRequest(login string, password string, realm string) *Request {
-	return &Request{Login: login, Password: password, Realm: realm}
+func NewRequest(login string, password string, realm string) *AuthRequest {
+	return &AuthRequest{Login: login, Password: password, Realm: realm}
 }

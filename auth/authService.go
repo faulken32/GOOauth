@@ -6,6 +6,7 @@ import (
 	"GOOauth/users"
 	"encoding/json"
 	"github.com/golang-jwt/jwt"
+	"log"
 	"net/http"
 	"time"
 )
@@ -20,7 +21,7 @@ type customClaims struct {
 }
 
 // token validation
-func valid(token string) (bool, error) {
+func isValid(token string) (bool, error, jwt.MapClaims) {
 	maker := JWTMaker{secretKey: "secureSecretText"}
 
 	keyFunc := func(token *jwt.Token) (interface{}, error) {
@@ -31,14 +32,15 @@ func valid(token string) (bool, error) {
 		return []byte(maker.secretKey), nil
 	}
 	parse, err := jwt.Parse(token, keyFunc)
-
+	claims := parse.Claims.(jwt.MapClaims)
+	log.Println(claims)
 	if err != nil {
-		return false, err
+		return false, err, nil
 	}
 	if parse.Valid {
-		return true, nil
+		return true, nil, claims
 	}
-	return false, err
+	return false, err, nil
 }
 
 // create a jwt token
@@ -57,10 +59,17 @@ func createToken(user string) string {
 	return signedToken
 }
 
+// extract token from request
+func extractToken(r *http.Request) string {
+	bearToken := r.Header.Get("Authorization")
+	return bearToken
+}
+
 // Authenticate  a user
 func Authenticate(request *http.Request) (dto.Response, dto.ErrorResponse) {
 
-	var authRequest dto.Request
+	var authRequest dto.AuthRequest
+
 	j := json.NewDecoder(request.Body)
 	err := j.Decode(&authRequest)
 	if err != nil {
@@ -75,8 +84,23 @@ func Authenticate(request *http.Request) (dto.Response, dto.ErrorResponse) {
 		}
 	}
 
-	fromRequest := users.NewFromRequest(authRequest)
+	//token := extractToken(request)
+	//	valid, err, claims := isValid(token)
+
+	if err != nil {
+		return dto.Response{}, dto.ErrorResponse{}
+	}
+
+	//if claims != nil {
+	//	userName := claims["username"].(string)
+	//	log.Println(userName)
+	//}
+
 	var response dto.Response
+
+	// check user in db
+	fromRequest := users.NewFromRequest(authRequest)
+
 	if fromRequest.AsRightOn(authRequest.Realm) {
 		j := json.NewDecoder(request.Body)
 		err := j.Decode(&authRequest)
@@ -87,7 +111,7 @@ func Authenticate(request *http.Request) (dto.Response, dto.ErrorResponse) {
 	} else {
 		return dto.Response{}, dto.ErrorResponse{
 			HttpStatus:   403,
-			ErrorMessage: "You don't have right on reaml",
+			ErrorMessage: "You don't have right on realm",
 		}
 
 	}
