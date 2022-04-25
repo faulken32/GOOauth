@@ -20,6 +20,7 @@ func truncateTable() {
 	}
 
 }
+
 func TestCreateOne(t *testing.T) {
 	truncateTable()
 	log.Println("start test db insert")

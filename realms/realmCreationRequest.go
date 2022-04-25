@@ -1,25 +1,25 @@
 package realms
 
-type realmCreationRequest struct {
-	Name   string
-	UserId int64
+type RealmCreationRequest struct {
+	Name string
+	Url  string
 }
 
-func newRealmCreationRequest(name string, userId int64) *realmCreationRequest {
-	return &realmCreationRequest{Name: name, UserId: userId}
+// NewRealmCreationRequest Create a realm
+func NewRealmCreationRequest(name string, url string) *RealmCreationRequest {
+	return &RealmCreationRequest{Name: name, Url: url}
 }
 
-func (r realmCreationRequest) MapToRealm() *realm {
-
-	r2 := &realm{}
-
+//MapToRealm map a request to real struct
+func (r RealmCreationRequest) MapToRealm() *Realm {
+	r2 := &Realm{}
 	if r.Name != "" {
 		r2.Name = r.Name
 	}
-	if r.UserId != 0 {
-		r2.UserId = r.UserId
+
+	if r.Url != "" {
+		r2.Url = r.Url
 	}
 
 	return r2
-
 }

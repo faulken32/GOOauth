@@ -3,6 +3,7 @@ package main
 import (
 	"GOOauth/Utils"
 	"GOOauth/auth"
+	"GOOauth/realms"
 	"GOOauth/users"
 	"encoding/json"
 	"errors"
@@ -16,6 +17,7 @@ func main() {
 	http.HandleFunc("/", mainHandler)
 	http.HandleFunc("/auth", authHandler)
 	http.HandleFunc("/private/user/create", userHandler)
+	http.HandleFunc("/private/realm/create", realmAddHandler)
 	err := http.ListenAndServe(":8080", nil)
 	Utils.CheckAndDie(err)
 
@@ -44,6 +46,20 @@ func authHandler(w http.ResponseWriter, r *http.Request) {
 		err := encoder.Encode(success)
 		Utils.CheckAndWarn(err)
 	}
+
+}
+
+// add a realm into Db
+func realmAddHandler(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-type", "application/json;charset=UTF-8")
+	reals := &realms.RealmCreationRequest{}
+	j := json.NewDecoder(r.Body)
+	err := j.Decode(reals)
+	Utils.CheckAndWarn(err)
+	realm, err := reals.MapToRealm().CreateOneInDb()
+
+	encoder := json.NewEncoder(w)
+	Utils.ReturnErrorOrHTTPResponse(w, err, encoder, realm)
 
 }
 
