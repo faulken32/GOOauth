@@ -18,6 +18,7 @@ func main() {
 	http.HandleFunc("/auth", authHandler)
 	http.HandleFunc("/private/user/create", userHandler)
 	http.HandleFunc("/private/realm/create", realmAddHandler)
+	http.HandleFunc("/private/realm/add/user", realms.RealmAddUserHandler)
 	err := http.ListenAndServe(":8080", nil)
 	Utils.CheckAndDie(err)
 

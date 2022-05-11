@@ -14,30 +14,35 @@ type RealmUserService interface {
 
 type RealmUsers struct {
 	bun.BaseModel `bun:",table:realms_users"`
-	ID            int64  `bun:"id,pk,autoincrement"`
-	UserId        string `bun:"user_id,unique:compo"`
-	RealmId       string `bun:"realm_id,unique:compo"`
+	ID            int64 `bun:"id,pk,autoincrement"`
+	UserId        int64 `bun:"user_id,unique:compo"`
+	RealmId       int64 `bun:"realm_id,unique:compo"`
 }
 
-func NewRealmUsers(ID int64, userId string, realmId string) *RealmUsers {
+func NewRealmUsers(ID int64, userId int64, realmId int64) *RealmUsers {
 	return &RealmUsers{ID: ID, UserId: userId, RealmId: realmId}
 }
 
-func NewRealmUsersNoId(userId string, realmId string) RealmUsers {
+func NewRealmUsersNoId(userId int64, realmId int64) RealmUsers {
 	return RealmUsers{UserId: userId, RealmId: realmId}
 }
 
+// AddUserToRealm add a user to realm  does not check user or real exit
 func (r RealmUsers) AddUserToRealm() (sql.Result, error) {
 
-	ctx, b, errCreate := r.createTable()
+	ctx, db, errCreate := r.createTable()
 	if errCreate != nil {
 		Utils.CheckAndWarn(errCreate)
+
+		_ = db.Close()
 		return nil, errCreate
 	} else {
-		exec, errInsert := b.NewInsert().Model(&r).Exec(ctx)
+		exec, errInsert := db.NewInsert().Model(&r).Exec(ctx)
 		if errInsert != nil {
+			_ = db.Close()
 			return nil, errInsert
 		}
+		_ = db.Close()
 		return exec, nil
 	}
 }
