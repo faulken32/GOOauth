@@ -7,12 +7,12 @@ import (
 )
 
 func TestAsRightOn(t *testing.T) {
-	user := User{}
-	on := user.AsRightOn("")
-
-	if on != true {
-		t.Error("eeeee")
+	user := User{
+		Login: "nicolas",
 	}
+	on, _ := user.AsRightOn("toto")
+
+	assert.True(t, on)
 }
 
 func TestNewFromRequest(t *testing.T) {

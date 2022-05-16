@@ -2,7 +2,7 @@ package users
 
 import (
 	"GOOauth/auth/dto"
-	"log"
+	"GOOauth/myDB"
 )
 
 // UserAuth interface
@@ -18,18 +18,23 @@ type User struct {
 }
 
 // AsRightOn check is user as right on a realm
-func (u User) AsRightOn(realm string) bool {
+func (u User) AsRightOn(realm string) (bool, error) {
 
-	log.Println(u)
-	log.Println(realm)
-	//oneByLogin := GetOneByLogin(u.Login)
+	var res = ""
+	db := myDB.InitDb()
+	err := db.QueryRow("SELECT u.login from \"user\" as u "+
+		" inner join realms_users ru on u.id = ru.user_id "+
+		" inner join realms r on r.id = ru.realm_id"+
+		" where u.login = ? AND r.name= ? ;", u.Login, realm).Scan(&res)
+	if err != nil {
+		return false, err
+	}
+	if res == u.Login {
+		return true, nil
+	}
+	return false, nil
 
-	return true
 }
-
-//func New() *User_id {
-//	return &User_id{}
-//}
 
 //NewFromRequest create a user from an AuthRequest
 func NewFromRequest(request dto.AuthRequest) User {

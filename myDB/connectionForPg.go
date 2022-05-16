@@ -10,7 +10,7 @@ import (
 
 func InitDb() *bun.DB {
 
-	dsn := "postgres://postgres:toto@localhost:5432/postgres?sslmode=disable"
+	dsn := "postgres://postgres:password@localhost:5432/postgres?sslmode=disable"
 	sqlDb := sql.OpenDB(pgdriver.NewConnector(pgdriver.WithDSN(dsn)))
 	db := bun.NewDB(sqlDb, pgdialect.New())
 
