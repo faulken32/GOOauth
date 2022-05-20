@@ -14,6 +14,8 @@ import (
 
 func main() {
 
+	log.Println("starting app")
+
 	http.HandleFunc("/", mainHandler)
 	http.HandleFunc("/auth", authHandler)
 	http.HandleFunc("/private/user/create", userHandler)

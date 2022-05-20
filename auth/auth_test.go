@@ -1,7 +1,7 @@
 package auth
 
 import (
-	"GOOauth/auth/dto"
+	"GOOauth/src/auth/dto"
 	"bytes"
 	"encoding/json"
 	"github.com/stretchr/testify/assert"

@@ -1,7 +1,7 @@
 package realms
 
 import (
-	"GOOauth/myDB"
+	"GOOauth/src/myDB"
 	"context"
 	"github.com/stretchr/testify/assert"
 	"log"

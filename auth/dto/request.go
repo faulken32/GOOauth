@@ -1,6 +1,8 @@
 package dto
 
-import "GOOauth/Error"
+import (
+	"GOOauth/Error"
+)
 
 type RequestValidator interface {
 	Validator(request AuthRequest) *Error.InvalidAuthRequest

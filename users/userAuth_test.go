@@ -26,7 +26,6 @@ func TestNewFromRequest(t *testing.T) {
 	assert.Equalf(t, users, User{
 		Login:    "",
 		Password: "",
-		Realm:    "",
 		Active:   true,
 	}, "")
 }

@@ -1,7 +1,7 @@
 package myDB
 
 import (
-	"GOOauth/Utils"
+	"GOOauth/src/Utils"
 	"context"
 	"log"
 	"testing"

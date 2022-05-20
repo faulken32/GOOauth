@@ -68,15 +68,13 @@ func extractToken(r *http.Request) string {
 // Authenticate  a user
 func Authenticate(request *http.Request) (dto.Response, dto.ErrorResponse) {
 
-	var authRequest dto.AuthRequest
-
-	j := json.NewDecoder(request.Body)
-	err := j.Decode(&authRequest)
+	authRequest, err := decodeRequest(request)
 	if err != nil {
 		return dto.Response{}, dto.ErrorResponse{}
 	}
 
 	validatorError := authRequest.Validator(authRequest)
+
 	if validatorError != nil {
 		return dto.Response{}, dto.ErrorResponse{
 			HttpStatus:   http.StatusBadRequest,
@@ -84,36 +82,41 @@ func Authenticate(request *http.Request) (dto.Response, dto.ErrorResponse) {
 		}
 	}
 
-	//token := extractToken(request)
-	//	valid, err, claims := isValid(token)
-
-	if err != nil {
-		return dto.Response{}, dto.ErrorResponse{}
-	}
-
-	//if claims != nil {
-	//	userName := claims["username"].(string)
-	//	log.Println(userName)
-	//}
-
-	var response dto.Response
-
 	// check user in db
 	fromRequest := users.NewFromRequest(authRequest)
+	on, err := fromRequest.AsRightOn(authRequest.Realm)
 
-	if fromRequest.AsRightOn(authRequest.Realm) {
-		j := json.NewDecoder(request.Body)
-		err := j.Decode(&authRequest)
-		Utils.CheckAndWarn(err)
-		token := createToken(authRequest.Login)
-		response = dto.NewResponse(token, "")
-		return response, dto.ErrorResponse{}
+	if err != nil {
+		return dto.Response{}, dto.ErrorResponse{
+			HttpStatus:   500,
+			ErrorMessage: err.Error(),
+		}
+	}
+
+	var response dto.Response
+	if on {
+		return encodeAuthResponse(authRequest, response)
 	} else {
 		return dto.Response{}, dto.ErrorResponse{
 			HttpStatus:   403,
 			ErrorMessage: "You don't have right on realm",
 		}
-
 	}
 
+}
+
+// build the grant response with token
+func encodeAuthResponse(authRequest dto.AuthRequest, response dto.Response) (dto.Response, dto.ErrorResponse) {
+	token := createToken(authRequest.Login)
+	response = dto.NewResponse(token, "")
+
+	return response, dto.ErrorResponse{}
+}
+
+func decodeRequest(request *http.Request) (dto.AuthRequest, error) {
+	var authRequest dto.AuthRequest
+
+	j := json.NewDecoder(request.Body)
+	err := j.Decode(&authRequest)
+	return authRequest, err
 }

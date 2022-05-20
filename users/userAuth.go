@@ -14,18 +14,24 @@ type User struct {
 	Login    string
 	Password string
 	Active   bool
-	Realm    string
+}
+
+func NewUserEmpty() User {
+	return User{}
 }
 
 // AsRightOn check is user as right on a realm
 func (u User) AsRightOn(realm string) (bool, error) {
 
 	var res = ""
+	var query = "SELECT u.login from \"user\" as u " +
+		" inner join realms_users ru on u.id = ru.user_id " +
+		" inner join realms r on r.id = ru.realm_id" +
+		" where u.login = ? AND r.name= ? ;"
 	db := myDB.InitDb()
-	err := db.QueryRow("SELECT u.login from \"user\" as u "+
-		" inner join realms_users ru on u.id = ru.user_id "+
-		" inner join realms r on r.id = ru.realm_id"+
-		" where u.login = ? AND r.name= ? ;", u.Login, realm).Scan(&res)
+
+	err := db.QueryRow(query, u.Login, realm).Scan(&res)
+
 	if err != nil {
 		return false, err
 	}
@@ -43,7 +49,6 @@ func NewFromRequest(request dto.AuthRequest) User {
 		Login:    request.Login,
 		Password: request.Password,
 		Active:   true,
-		Realm:    request.Realm,
 	}
 
 }

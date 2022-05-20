@@ -1,0 +1,5 @@
+package myDB
+
+func createShema() {
+
+}

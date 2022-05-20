@@ -5,9 +5,6 @@ func MapIt(request UserCreationRequest) UserDb {
 	user := UserDb{}
 	// TODO misssing validator
 
-	if request.Realm != "" {
-		user.Realm = request.Realm
-	}
 	if request.Name != "" {
 		user.Name = request.Name
 	}

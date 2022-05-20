@@ -24,7 +24,6 @@ type UserDb struct {
 	Name          string `bun:"name,unique"`
 	Email         string `bun:"email,unique"`
 	Password      string `bun:"password"`
-	Realm         string `bun:"realm"`
 }
 
 func NewUserDbNoId(login string, name string, email string) *UserDb {

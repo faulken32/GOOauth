@@ -1,8 +1,8 @@
 package main
 
 import (
-	"GOOauth/myDB"
-	"GOOauth/users"
+	"GOOauth/src/myDB"
+	users2 "GOOauth/src/users"
 	"bytes"
 	"context"
 	"encoding/json"
@@ -17,7 +17,7 @@ func truncateTable() {
 	log.Println("prepare test for user crud ----- TRUNCATE USER TABLE -------")
 
 	db := myDB.InitDb()
-	u := users.UserDb{}
+	u := users2.UserDb{}
 	_, err := db.NewTruncateTable().Model(&u).Exec(context.Background())
 	if err != nil {
 		log.Println(err)
@@ -29,7 +29,7 @@ func truncateTable() {
 func Test_userHandler(t *testing.T) {
 
 	truncateTable()
-	body := &users.UserCreationRequest{
+	body := &users2.UserCreationRequest{
 		Login:    "nicolas",
 		Name:     "canicatti",
 		Email:    "canicatti.eee@aaaaa.com",

@@ -4,7 +4,7 @@
     <working_directory value="$PROJECT_DIR$/" />
     <kind value="PACKAGE" />
     <package value="GOOauth" />
-    <directory value="$PROJECT_DIR$" />
+    <directory value="$PROJECT_DIR$/src" />
     <filePath value="$PROJECT_DIR$/Main.go" />
     <method v="2" />
   </configuration>
