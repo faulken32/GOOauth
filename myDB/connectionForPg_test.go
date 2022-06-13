@@ -1,7 +1,7 @@
 package myDB
 
 import (
-	"GOOauth/src/Utils"
+	"GOOauth/users"
 	"context"
 	"log"
 	"testing"
@@ -15,8 +15,13 @@ func TestConnect(t *testing.T) {
 	// The request has a timeout, so create a context that is
 	// canceled automatically when the timeout expires.
 
-	res, err := initDb.ExecContext(ctx, "SELECT 1")
-	Utils.CheckAndWarn(err)
+	res, _ := initDb.ExecContext(ctx, "SELECT 1")
+	//Utils.CheckAndWarn(err)
 	log.Println(res)
 
+}
+
+func TestTruncateTable(t *testing.T) {
+
+	truncateTable(users.User{})
 }

@@ -1,7 +1,6 @@
 package myDB
 
 import (
-	"GOOauth/Utils"
 	"database/sql"
 	"github.com/uptrace/bun"
 	"github.com/uptrace/bun/dialect/pgdialect"
@@ -15,12 +14,4 @@ func InitDb() *bun.DB {
 	db := bun.NewDB(sqlDb, pgdialect.New())
 
 	return db
-}
-
-func Close(db *bun.DB) {
-
-	defer func(db *bun.DB) {
-		err := db.Close()
-		Utils.CheckAndWarn(err)
-	}(db)
 }

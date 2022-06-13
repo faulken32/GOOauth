@@ -23,7 +23,7 @@ func main() {
 	http.HandleFunc("/private/realm/add/user", realms.RealmAddUserHandler)
 	err := http.ListenAndServe(":8080", nil)
 	Utils.CheckAndDie(err)
-
+	log.Println("app started")
 }
 
 func authHandler(w http.ResponseWriter, r *http.Request) {
@@ -84,7 +84,7 @@ func userHandler(w http.ResponseWriter, r *http.Request) {
 		err := j.Decode(&userCreationRequest)
 		// TODO  check token from user super admin
 		Utils.CheckAndWarn(err)
-		user := users.MapIt(userCreationRequest)
+		user := users.MapItToUser(userCreationRequest)
 		user.ToJson()
 		one, userError := user.CreateOne()
 		encoder := json.NewEncoder(w)

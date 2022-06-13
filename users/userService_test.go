@@ -1,18 +1,18 @@
 package users
 
 import (
-	"GOOauth/src/myDB"
+	"GOOauth/myDB"
 	"context"
 	"github.com/stretchr/testify/assert"
 	"log"
 	"testing"
 )
 
-func truncateTable() {
+func TruncateTable() {
 	log.Println("prepare test for user crud ----- TRUNCATE USER TABLE -------")
 
 	db := myDB.InitDb()
-	u := UserDb{}
+	u := User{}
 	_, err := db.NewTruncateTable().Model(&u).Exec(context.Background())
 	if err != nil {
 		log.Println(err)
@@ -22,22 +22,22 @@ func truncateTable() {
 }
 
 func TestCreateOne(t *testing.T) {
-	truncateTable()
+	TruncateTable()
 	log.Println("start test db insert")
 
-	noId := NewUserDbNoId("nicolas", "nicolas", "nicolas")
+	user := NewUser("nicolas", "nicolas", "nicolas@toto.com", "toto")
 
-	one, userError := noId.CreateOne()
+	one, userError := user.CreateOne()
 	if one != nil {
-		one.ToJson()
+		user.ToJson()
 	}
 
 	if userError != nil {
 		userError.ToJson()
 	}
 
-	noId = NewUserDbNoId("nicolas", "nicolas", "nicolas")
-	_, err := noId.CreateOne()
+	user = NewUser("nicolas", "nicolas", "nicolas@toto.com", "toto")
+	_, err := user.CreateOne()
 	assert.NotNil(t, err, "assert duplicate user creation")
 	if err != nil {
 		err.ToJson()
@@ -45,10 +45,29 @@ func TestCreateOne(t *testing.T) {
 
 }
 
-func TestGetOne(t *testing.T) {
-
-	u := GetOneByLogin("nicolas")
-
-	u.ToJson()
-
-}
+//func TestGetOne(t *testing.T) {
+//	TruncateTable()
+//
+//	user := NewUser("nicolas", "nicolas", "nicolas@toto.com", "toto")
+//	user, _ = UserRepository.CreateOne(user)
+//
+//	user.ToJson()
+//	userFromDb := UserRepository.GetOneByLogin(user, "nicolas")
+//	assert.Equal(t, user, userFromDb)
+//
+//}
+//
+//func TestUser_ValidateIdentity(t *testing.T) {
+//
+//	TruncateTable()
+//	user := NewUser("nicolas", "nicolas", "nicolas@toto.com", "toto")
+//	user, _ = UserRepository.CreateOne(user)
+//	identity, userError := UserService.ValidateIdentity(user, "toto")
+//
+//	assert.Nil(t, userError)
+//	assert.True(t, identity)
+//
+//	identity, userError = UserService.ValidateIdentity(user, "")
+//	assert.False(t, identity)
+//	assert.Error(t, userError)
+//}

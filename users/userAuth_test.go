@@ -6,26 +6,38 @@ import (
 	"testing"
 )
 
-func TestAsRightOn(t *testing.T) {
-	user := User{
-		Login: "nicolas",
-	}
-	on, _ := user.AsRightOn("toto")
+//func TestAsRightOn(t *testing.T) {
+//	user := UserAuthRequest{
+//		Login: "nicolas",
+//	}
+//	on, _ := user.AsRightOn("toto")
+//
+//	assert.True(t, on)
+//}
 
-	assert.True(t, on)
+func TestFull(t *testing.T) {
+
+	user := NewUser("nicolas", "nicolas", "nicolas@toto.com", "toto")
+
+	_, _ = user.CreateOne()
+
+	r := UserAuthRequest{
+		Login:    "nicolas",
+		Password: "toto",
+	}
+
+	r.MapToUser().Auth("test")
 }
 
 func TestNewFromRequest(t *testing.T) {
 	r := dto.AuthRequest{
 		Login:    "",
 		Password: "",
-		Realm:    "",
 	}
 
 	users := NewFromRequest(r)
-	assert.Equalf(t, users, User{
+	assert.Equalf(t, users, UserAuthRequest{
 		Login:    "",
 		Password: "",
-		Active:   true,
 	}, "")
 }

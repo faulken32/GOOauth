@@ -1,14 +1,12 @@
 package auth
 
 import (
-	"GOOauth/Utils"
 	"GOOauth/auth/dto"
 	"GOOauth/users"
 	"encoding/json"
 	"github.com/golang-jwt/jwt"
 	"log"
 	"net/http"
-	"time"
 )
 
 type JWTMaker struct {
@@ -17,6 +15,7 @@ type JWTMaker struct {
 
 type customClaims struct {
 	Username string `json:"username"`
+	Password string `json:"password"`
 	jwt.StandardClaims
 }
 
@@ -41,22 +40,6 @@ func isValid(token string) (bool, error, jwt.MapClaims) {
 		return true, nil, claims
 	}
 	return false, err, nil
-}
-
-// create a jwt token
-func createToken(user string) string {
-	expirationTime := time.Now().Add(5 * time.Minute)
-	claims := customClaims{
-		Username: user,
-		StandardClaims: jwt.StandardClaims{
-			ExpiresAt: expirationTime.Unix(),
-			Issuer:    "nameOfWebsiteHere",
-		},
-	}
-	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
-	signedToken, err := token.SignedString([]byte("secureSecretText"))
-	Utils.CheckAndWarn(err)
-	return signedToken
 }
 
 // extract token from request
@@ -103,14 +86,6 @@ func Authenticate(request *http.Request) (dto.Response, dto.ErrorResponse) {
 		}
 	}
 
-}
-
-// build the grant response with token
-func encodeAuthResponse(authRequest dto.AuthRequest, response dto.Response) (dto.Response, dto.ErrorResponse) {
-	token := createToken(authRequest.Login)
-	response = dto.NewResponse(token, "")
-
-	return response, dto.ErrorResponse{}
 }
 
 func decodeRequest(request *http.Request) (dto.AuthRequest, error) {

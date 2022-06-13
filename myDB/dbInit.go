@@ -1,5 +1,0 @@
-package myDB
-
-func createShema() {
-
-}
