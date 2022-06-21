@@ -12,10 +12,10 @@ import (
 
 func TestCreateToken(t *testing.T) {
 
-	token := createToken("nicolas")
+	token, _ := CreateToken("nicolas", "nicolas", "toto")
 	assert.NotEmpty(t, token)
 	assert.NotNil(t, token)
-	b, err, _ := isValid(token)
+	b, err, _ := decodeAndValidateToken(token)
 	assert.True(t, b)
 	if err != nil {
 		log.Fatal(err)
@@ -32,7 +32,7 @@ func TestAuthenticate(t *testing.T) {
 
 	out, _ := json.Marshal(authRequest)
 	buffer := bytes.NewBuffer(out)
-	token := createToken("nicolas")
+	token, _ := CreateToken("nicolas", "nicolas", "toto")
 	r, _ := http.NewRequest("POST", "/auth", buffer)
 	r.Header.Add("Authorization", token)
 	authenticate, err := Authenticate(r)

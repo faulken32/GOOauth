@@ -26,7 +26,7 @@ func TestFull(t *testing.T) {
 		Password: "toto",
 	}
 
-	r.MapToUser().Auth("test")
+	r.MapToUser().asRightOn("toto")
 }
 
 func TestNewFromRequest(t *testing.T) {

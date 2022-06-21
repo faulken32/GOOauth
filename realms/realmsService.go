@@ -10,6 +10,20 @@ import (
 
 type RealService interface {
 	CreateOneInDb() (*Realm, error)
+	TruncateTable()
+}
+
+func (r Realm) TruncateTable() {
+	log.Println("prepare test for user crud ----- TRUNCATE RealmUsers TABLE -------")
+
+	db := myDB.InitDb()
+
+	_, err := db.NewTruncateTable().Model(&r).Exec(context.Background())
+	if err != nil {
+		log.Println(err)
+		return
+	}
+
 }
 
 func (r Realm) CreateOneInDb() (*Realm, error) {

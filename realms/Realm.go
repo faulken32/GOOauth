@@ -9,6 +9,7 @@ type Realm struct {
 	Url           string `bun:"url"`
 }
 
-func NewRealm(ID int64, name string) *Realm {
-	return &Realm{ID: ID, Name: name}
+func NewRealm(name string, url string) *Realm {
+
+	return &Realm{Name: name, Url: url}
 }

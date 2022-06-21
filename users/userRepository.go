@@ -10,7 +10,7 @@ import (
 )
 
 type QueryRes struct {
-	Id   string
+	Id   int
 	Name string
 }
 
@@ -66,22 +66,34 @@ func (u User) createTable() (context.Context, *bun.DB, error) {
 	return ctx, db, err
 }
 
-func (u User) GetUserRealm() (QueryRes, error) {
+func (u User) GetUserRealm() ([]QueryRes, error) {
 
-	var query = "SELECT r.name from \"user\" as u " +
+	var query = "SELECT r.id, r.name from \"user\" as u " +
 		" inner join realms_users ru on u.id = ru.user_id " +
 		" inner join realms r on r.id = ru.realm_id" +
 		" where u.login = ?  ;"
 	db := myDB.InitDb()
-	res := QueryRes{}
 
-	var realmName string
+	var items []QueryRes
 
-	err := db.QueryRow(query, u.Login).Scan()
+	rows, err := db.Query(query, u.Login)
 
-	if err != nil {
-		return res, err
+	defer func(db *bun.DB) {
+		_ = db.Close()
+	}(db)
+
+	for rows.Next() {
+		var r QueryRes
+		err := rows.Scan(&r.Id, &r.Name)
+		if err != nil {
+			return []QueryRes{}, err
+		}
+		items = append(items, r)
 	}
 
-	return res, nil
+	if err != nil {
+		return []QueryRes{}, err
+	}
+
+	return items, nil
 }

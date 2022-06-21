@@ -6,10 +6,12 @@ import (
 	"context"
 	"database/sql"
 	"github.com/uptrace/bun"
+	"log"
 )
 
 type RealmUserService interface {
 	AddUserToRealm() (sql.Result, error)
+	TruncateTable()
 }
 
 type RealmUsers struct {
@@ -25,6 +27,19 @@ func NewRealmUsers(ID int64, userId int64, realmId int64) *RealmUsers {
 
 func NewRealmUsersNoId(userId int64, realmId int64) RealmUsers {
 	return RealmUsers{UserId: userId, RealmId: realmId}
+}
+
+func (r RealmUsers) TruncateTable() {
+	log.Println("prepare test for user crud ----- TRUNCATE RealmUsers TABLE -------")
+
+	db := myDB.InitDb()
+
+	_, err := db.NewTruncateTable().Model(&r).Exec(context.Background())
+	if err != nil {
+		log.Println(err)
+		return
+	}
+
 }
 
 // AddUserToRealm add a user to realm  does not check user or real exit

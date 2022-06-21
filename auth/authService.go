@@ -13,14 +13,20 @@ type JWTMaker struct {
 	secretKey string
 }
 
+type authRealms struct {
+	realms []users.QueryRes
+}
+
 type customClaims struct {
-	Username string `json:"username"`
-	Password string `json:"password"`
+	Username   string           `json:"username"`
+	Password   string           `json:"password"`
+	Login      string           `json:"login"`
+	AuthRealms []users.QueryRes `json:"authRealms"`
 	jwt.StandardClaims
 }
 
 // token validation
-func isValid(token string) (bool, error, jwt.MapClaims) {
+func decodeAndValidateToken(token string) (bool, error, jwt.MapClaims) {
 	maker := JWTMaker{secretKey: "secureSecretText"}
 
 	keyFunc := func(token *jwt.Token) (interface{}, error) {
@@ -66,7 +72,7 @@ func Authenticate(request *http.Request) (dto.Response, dto.ErrorResponse) {
 	}
 
 	// check user in db
-	fromRequest := users.NewFromRequest(authRequest)
+	/*fromRequest := users.NewFromRequest(authRequest)
 	on, err := fromRequest.AsRightOn(authRequest.Realm)
 
 	if err != nil {
@@ -85,7 +91,11 @@ func Authenticate(request *http.Request) (dto.Response, dto.ErrorResponse) {
 			ErrorMessage: "You don't have right on realm",
 		}
 	}
-
+	*/
+	return dto.Response{}, dto.ErrorResponse{
+		HttpStatus:   403,
+		ErrorMessage: "You don't have right on realm",
+	}
 }
 
 func decodeRequest(request *http.Request) (dto.AuthRequest, error) {
