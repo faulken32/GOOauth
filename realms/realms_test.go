@@ -8,7 +8,7 @@ func TestRealm_CreateOne(t *testing.T) {
 
 	//r := newRealmForUser("test", 1)
 	//
-	//_, s := r.CreateOneInDb()
+	//_, s := r.Save()
 
 	//Utils.CheckAndWarn(s)
 }

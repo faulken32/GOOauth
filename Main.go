@@ -3,6 +3,7 @@ package main
 import (
 	"GOOauth/Utils"
 	"GOOauth/auth"
+	"GOOauth/proxy"
 	"GOOauth/realms"
 	"GOOauth/users"
 	"encoding/json"
@@ -15,7 +16,7 @@ import (
 func main() {
 
 	log.Println("starting app")
-	http.HandleFunc("/api/*", mainHandler)
+	http.HandleFunc("/api/*", proxy.Main)
 	http.HandleFunc("/", mainHandler)
 	http.HandleFunc("/auth", authHandler)
 	http.HandleFunc("/private/user/create", userHandler)
@@ -59,7 +60,7 @@ func realmAddHandler(w http.ResponseWriter, r *http.Request) {
 	j := json.NewDecoder(r.Body)
 	err := j.Decode(reals)
 	Utils.CheckAndWarn(err)
-	realm, err := reals.MapToRealm().CreateOneInDb()
+	realm, err := reals.MapToRealm().Save()
 
 	encoder := json.NewEncoder(w)
 	Utils.ReturnErrorOrHTTPResponse(w, err, encoder, realm)
@@ -84,7 +85,7 @@ func userHandler(w http.ResponseWriter, r *http.Request) {
 		err := j.Decode(&userCreationRequest)
 		// TODO  check token from user super admin
 		Utils.CheckAndWarn(err)
-		user := users.MapItToUser(userCreationRequest)
+		user := userCreationRequest.MapToUser()
 		user.ToJson()
 		one, userError := user.CreateOne()
 		encoder := json.NewEncoder(w)

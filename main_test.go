@@ -1,8 +1,8 @@
 package main
 
 import (
-	"GOOauth/src/myDB"
-	users2 "GOOauth/src/users"
+	"GOOauth/myDB"
+	users2 "GOOauth/users"
 	"bytes"
 	"context"
 	"encoding/json"

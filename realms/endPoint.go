@@ -2,14 +2,14 @@ package realms
 
 import "github.com/uptrace/bun"
 
-type Realm struct {
-	bun.BaseModel `bun:",table:realms"`
+type Endpoint struct {
+	bun.BaseModel `bun:",table:end_points"`
 	ID            int64  `bun:"id,pk,autoincrement"`
 	Name          string `bun:"name,unique"`
 	Url           string `bun:"url"`
 }
 
-func NewRealm(name string, url string) *Realm {
+func NewEndPoint(name string, url string) *Endpoint {
 
-	return &Realm{Name: name, Url: url}
+	return &Endpoint{Name: name, Url: url}
 }

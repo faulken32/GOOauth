@@ -16,9 +16,9 @@ func TestUser_GetUserRealm(t *testing.T) {
 	user := NewUser("nicolas", "nicolas", "nicolas@toto.com", "toto")
 
 	user, err := user.CreateOne()
-	realm := realms.NewRealm("test", "/test")
+	realm := realms.NewEndPoint("test", "/test")
 	realm.TruncateTable()
-	realm, err2 := realm.CreateOneInDb()
+	realm, err2 := realm.Save()
 	usersRealm := realms.RealmUsers{UserId: user.ID, RealmId: realm.ID}
 	usersRealm.TruncateTable()
 	toRealm, err3 := usersRealm.AddUserToRealm()

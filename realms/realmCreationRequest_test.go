@@ -12,7 +12,7 @@ func truncateTable() {
 	log.Println("prepare test for real crud ----- TRUNCATE real TABLE -------")
 
 	db := myDB.InitDb()
-	u := Realm{}
+	u := Endpoint{}
 	_, err := db.NewTruncateTable().Model(&u).Exec(context.Background())
 	if err != nil {
 		log.Println(err)
@@ -26,7 +26,7 @@ func TestRealmCreationRequest_MapToRealm(t *testing.T) {
 	toRealm := NewRealmCreationRequest("nicolas", "/api").MapToRealm()
 	log.Println(toRealm)
 
-	toRealm, err := toRealm.CreateOneInDb()
+	toRealm, err := toRealm.Save()
 	if err != nil {
 		return
 	}

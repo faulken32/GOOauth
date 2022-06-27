@@ -14,21 +14,21 @@ type (
 	}
 )
 
-func (ucr UserCreationRequest) MapToUser(request UserCreationRequest) User {
+func (ucr UserCreationRequest) MapToUser() User {
 
 	user := User{}
 	// TODO misssing validator
 
-	if request.Name != "" {
+	if ucr.Name != "" {
 		user.Name = ucr.Name
 	}
-	if request.Login != "" {
+	if ucr.Login != "" {
 		user.Login = ucr.Login
 	}
-	if request.Email != "" {
+	if ucr.Email != "" {
 		user.Email = ucr.Email
 	}
-	if request.Password != "" {
+	if ucr.Password != "" {
 		user.Password = ucr.Password
 	}
 	return user

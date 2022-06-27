@@ -11,8 +11,8 @@ func NewRealmCreationRequest(name string, url string) *RealmCreationRequest {
 }
 
 //MapToRealm map a request to real struct
-func (r RealmCreationRequest) MapToRealm() *Realm {
-	r2 := &Realm{}
+func (r RealmCreationRequest) MapToRealm() *Endpoint {
+	r2 := &Endpoint{}
 	if r.Name != "" {
 		r2.Name = r.Name
 	}
