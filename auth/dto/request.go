@@ -9,9 +9,14 @@ type RequestValidator interface {
 }
 
 type AuthRequest struct {
-	Login    string
-	Password string
-	Realm    string
+	Login             string
+	Name              string
+	Password          string
+	RequestedEndPoint string
+}
+
+func NewAuthRequest(login string, name string, password string) *AuthRequest {
+	return &AuthRequest{Login: login, Name: name, Password: password}
 }
 
 func (r AuthRequest) Validator(request AuthRequest) *Error.InvalidAuthRequest {
@@ -25,13 +30,5 @@ func (r AuthRequest) Validator(request AuthRequest) *Error.InvalidAuthRequest {
 		return Error.NewInvalidAuthRequest(1, Error.MissingPassword)
 	}
 
-	if request.Realm == "" {
-
-		return Error.NewInvalidAuthRequest(3, Error.MissingRealm)
-	}
 	return nil
-}
-
-func NewRequest(login string, password string, realm string) *AuthRequest {
-	return &AuthRequest{Login: login, Password: password, Realm: realm}
 }

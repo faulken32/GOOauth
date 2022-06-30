@@ -25,8 +25,8 @@ type customClaims struct {
 	jwt.StandardClaims
 }
 
-// token validation
-func decodeAndValidateToken(token string) (bool, error, jwt.MapClaims) {
+// DecodeAndValidateToken token validation
+func DecodeAndValidateToken(token string) (bool, error, jwt.MapClaims) {
 	maker := JWTMaker{secretKey: "secureSecretText"}
 
 	keyFunc := func(token *jwt.Token) (interface{}, error) {
@@ -48,8 +48,8 @@ func decodeAndValidateToken(token string) (bool, error, jwt.MapClaims) {
 	return false, err, nil
 }
 
-// extract token from request
-func extractToken(r *http.Request) string {
+// ExtractToken Extract token from request
+func ExtractToken(r *http.Request) string {
 	bearToken := r.Header.Get("Authorization")
 	return bearToken
 }
@@ -72,8 +72,8 @@ func Authenticate(request *http.Request) (dto.Response, dto.ErrorResponse) {
 	}
 
 	// check user in db
-	/*fromRequest := users.NewFromRequest(authRequest)
-	on, err := fromRequest.AsRightOn(authRequest.Realm)
+	fromRequest := users.NewFromRequest(authRequest)
+	fromRequest.MapToUser().Auth(fromRequest.EndPoint)
 
 	if err != nil {
 		return dto.Response{}, dto.ErrorResponse{
@@ -82,15 +82,20 @@ func Authenticate(request *http.Request) (dto.Response, dto.ErrorResponse) {
 		}
 	}
 
-	var response dto.Response
-	if on {
-		return encodeAuthResponse(authRequest, response)
-	} else {
-		return dto.Response{}, dto.ErrorResponse{
-			HttpStatus:   403,
-			ErrorMessage: "You don't have right on realm",
-		}
+	//token, err := CreateToken(authRequest.Login, authRequest.Name, authRequest.Password)
+	if err != nil {
+		return dto.Response{}, dto.ErrorResponse{}
 	}
+
+	/*	var response dto.Response
+		if on {
+			return encodeAuthResponse(authRequest, response)
+		} else {
+			return dto.Response{}, dto.ErrorResponse{
+				HttpStatus:   403,
+				ErrorMessage: "You don't have right on realm",
+			}
+		}
 	*/
 	return dto.Response{}, dto.ErrorResponse{
 		HttpStatus:   403,

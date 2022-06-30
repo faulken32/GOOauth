@@ -11,6 +11,7 @@ import (
 
 type EndPointsRepository interface {
 	FindById() (*Endpoint, error)
+	FindByUrl() (*Endpoint, error)
 }
 
 func (e Endpoint) FindById() (*Endpoint, error) {
@@ -25,6 +26,34 @@ func (e Endpoint) FindById() (*Endpoint, error) {
 	}
 
 	return model, errors.New("missing id")
+}
+
+func (e Endpoint) FindByUrl() (*Endpoint, error) {
+	model := &Endpoint{}
+	if e.Url != "" {
+		db := myDB.InitDb()
+		err := db.NewSelect().Model(model).Where("url = ?", e.ID).Scan(context.Background(), model)
+		if err != nil {
+			return &Endpoint{}, err
+		}
+		return model, nil
+	}
+
+	return model, errors.New("missing url")
+}
+
+func (e Endpoint) FindByUri() (*Endpoint, error) {
+	model := &Endpoint{}
+	if e.Uri != "" {
+		db := myDB.InitDb()
+		err := db.NewSelect().Model(model).Where("uri = ?", e.Uri).Scan(context.Background(), model)
+		if err != nil {
+			return &Endpoint{}, err
+		}
+		return model, nil
+	}
+
+	return model, errors.New("missing uri")
 }
 
 func (e Endpoint) TruncateTable() {

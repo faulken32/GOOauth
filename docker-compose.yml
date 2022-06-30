@@ -3,7 +3,7 @@ services:
   user:
     build:
       context: .
-      dockerfile: user.Dockerfile
+      dockerfile: server.Dockerfile
     image: auth:latest
     ports:
       - '8080:8080'

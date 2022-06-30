@@ -12,6 +12,7 @@ import (
 type QueryRes struct {
 	Id   int
 	Name string
+	Uri  string
 }
 
 func (u User) TruncateTable() {
@@ -68,9 +69,9 @@ func (u User) createTable() (context.Context, *bun.DB, error) {
 
 func (u User) GetUserRealm() ([]QueryRes, error) {
 
-	var query = "SELECT r.id, r.name from \"user\" as u " +
+	var query = "SELECT ep.id, ep.name  , ep.uri from \"user\" as u " +
 		" inner join realms_users ru on u.id = ru.user_id " +
-		" inner join realms r on r.id = ru.realm_id" +
+		" inner join end_points ep on ep.id = ru.realm_id" +
 		" where u.login = ?  ;"
 	db := myDB.InitDb()
 
@@ -78,21 +79,21 @@ func (u User) GetUserRealm() ([]QueryRes, error) {
 
 	rows, err := db.Query(query, u.Login)
 
+	if err != nil {
+		return []QueryRes{}, err
+	}
+
 	defer func(db *bun.DB) {
 		_ = db.Close()
 	}(db)
 
 	for rows.Next() {
 		var r QueryRes
-		err := rows.Scan(&r.Id, &r.Name)
+		err := rows.Scan(&r.Id, &r.Name, &r.Uri)
 		if err != nil {
 			return []QueryRes{}, err
 		}
 		items = append(items, r)
-	}
-
-	if err != nil {
-		return []QueryRes{}, err
 	}
 
 	return items, nil

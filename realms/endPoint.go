@@ -1,12 +1,16 @@
 package realms
 
-import "github.com/uptrace/bun"
+import (
+	"github.com/uptrace/bun"
+)
 
 type Endpoint struct {
 	bun.BaseModel `bun:",table:end_points"`
 	ID            int64  `bun:"id,pk,autoincrement"`
 	Name          string `bun:"name,unique"`
 	Url           string `bun:"url"`
+	Uri           string `bun:"uri"`
+	Method        string `bun:"method"`
 }
 
 func NewEndPoint(name string, url string) *Endpoint {

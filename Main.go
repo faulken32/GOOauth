@@ -9,6 +9,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"github.com/gorilla/mux"
 	"log"
 	"net/http"
 )
@@ -16,13 +17,19 @@ import (
 func main() {
 
 	log.Println("starting app")
-	http.HandleFunc("/api/*", proxy.Main)
-	http.HandleFunc("/", mainHandler)
-	http.HandleFunc("/auth", authHandler)
-	http.HandleFunc("/private/user/create", userHandler)
-	http.HandleFunc("/private/realm/create", realmAddHandler)
-	http.HandleFunc("/private/realm/add/user", realms.RealmAddUserHandler)
-	err := http.ListenAndServe(":8080", nil)
+
+	rtr := mux.NewRouter()
+
+	rtr.HandleFunc("/api/{.*}", proxy.Main)
+
+	rtr.HandleFunc("/auth", authHandler)
+	rtr.HandleFunc("/private/user/create", userHandler)
+	rtr.HandleFunc("/private/realm/create", realmAddHandler)
+	rtr.HandleFunc("/private/realm/add/user", realms.RealmAddUserHandler)
+
+	http.Handle("/", rtr)
+	log.Println("Listening...")
+	err := http.ListenAndServe(":8090", nil)
 	Utils.CheckAndDie(err)
 	log.Println("app started")
 }

@@ -12,13 +12,14 @@ type (
 	UserAuthRequest struct {
 		Login    string
 		Password string
+		EndPoint string
 	}
 	UserAuth interface {
 		MapToUser() User
 	}
 )
 
-func (u User) Auth(realm string) {
+func (u User) Auth(endPoint string) {
 
 	known := u.GetOneByLogin()
 
@@ -26,10 +27,10 @@ func (u User) Auth(realm string) {
 
 		validPass, err := UserService.ValidateIdentity(u, known.Password)
 		if validPass && err == nil {
-			on, err := u.asRightOn(realm)
+			on, err := u.asRightOn(endPoint)
 			Utils.CheckAndWarn(err)
 			if on {
-				// generate token
+
 			}
 		}
 	}
@@ -87,6 +88,7 @@ func NewFromRequest(request dto.AuthRequest) UserAuthRequest {
 	return UserAuthRequest{
 		Login:    request.Login,
 		Password: request.Password,
+		EndPoint: request.RequestedEndPoint,
 	}
 
 }
