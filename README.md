@@ -9,4 +9,3 @@ GoOauth is a bundle of 3 tools
 - Oauth2 token server 
 - Simple gateway 
 
-<
