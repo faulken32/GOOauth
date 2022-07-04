@@ -34,9 +34,9 @@ func CreateToken(name string, login string, password string) (string, error) {
 				Issuer:    "nameOfWebsiteHere",
 			},
 		}
-
+		secret := Utils.AppConfig.Secret
 		token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
-		signedToken, err := token.SignedString([]byte("secureSecretText"))
+		signedToken, err := token.SignedString([]byte(secret.SecretKey))
 		Utils.CheckAndWarn(err)
 		return signedToken, nil
 	}

@@ -1,0 +1,12 @@
+
+
+database:
+  user: postgres
+  password: password
+  port: 5432
+  host: localhost
+  db_name: postgres
+secret:
+  secret_key: change_me
+
+

@@ -1,6 +1,7 @@
 package auth
 
 import (
+	"GOOauth/Utils"
 	"GOOauth/auth/dto"
 	"bytes"
 	"encoding/json"
@@ -12,6 +13,7 @@ import (
 
 func TestCreateToken(t *testing.T) {
 
+	Utils.ReadConfig(true)
 	token, _ := CreateToken("nicolas", "nicolas", "toto")
 	assert.NotEmpty(t, token)
 	assert.NotNil(t, token)
