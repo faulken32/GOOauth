@@ -11,24 +11,24 @@ import (
 	"testing"
 )
 
+func initContext() {
+	Utils.ReadConfig(true)
+}
+
 func TestCreateToken(t *testing.T) {
 
-	Utils.ReadConfig(true)
+	initContext()
 	token, _ := CreateToken("nicolas", "nicolas", "toto")
 	assert.NotEmpty(t, token)
 	assert.NotNil(t, token)
-	/*b, err, _ := decodeAndValidateToken(token)
-	assert.True(t, b)
-	if err != nil {
-		log.Fatal(err)
-	}*/
+
 }
 
 func TestAuthenticate(t *testing.T) {
-
+	initContext()
 	authRequest := dto.AuthRequest{
 		Login:             "nicolas",
-		Password:          "test",
+		Password:          "toto",
 		Name:              "nicolas",
 		RequestedEndPoint: "/api/toto",
 	}

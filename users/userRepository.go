@@ -5,7 +5,9 @@ import (
 	"GOOauth/Utils"
 	"GOOauth/myDB"
 	"context"
+	"errors"
 	"github.com/uptrace/bun"
+	"golang.org/x/crypto/bcrypt"
 	"log"
 )
 
@@ -35,6 +37,12 @@ func (u User) TruncateTable() {
 func (u User) CreateOne() (*User, *Error.UserError) {
 
 	ctx, db, err := u.createTable()
+
+	salt, err := hashAndSalt(u.Password)
+	if err != nil {
+		return nil, Error.NewUserError(err)
+	}
+	u.Password = salt
 
 	result, err := db.NewInsert().Model(&u).Exec(ctx)
 	if err != nil {
@@ -97,4 +105,17 @@ func (u User) GetUserRealm() ([]QueryRes, error) {
 	}
 
 	return items, nil
+}
+
+func hashAndSalt(pwd string) (string, error) {
+
+	if pwd == "" {
+		return "", errors.New("no password provided")
+	}
+
+	hash, err := bcrypt.GenerateFromPassword([]byte(pwd), bcrypt.DefaultCost)
+	if err != nil {
+		log.Println(err)
+	}
+	return string(hash), nil
 }

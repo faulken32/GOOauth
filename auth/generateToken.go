@@ -14,8 +14,8 @@ func CreateToken(name string, login string, password string) (string, error) {
 
 	user := users.NewUser(login, name, "", password)
 	userFromDb := user.GetOneByLogin()
-
-	if user.Login == userFromDb.Login && user.Password == userFromDb.Password {
+	isAuth, err := userFromDb.ValidateIdentity(password)
+	if err == nil && isAuth && user.Login == userFromDb.Login {
 
 		realm, err := userFromDb.GetUserRealm()
 

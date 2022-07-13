@@ -33,10 +33,6 @@ type JWTMaker struct {
 	secretKey string
 }
 
-type authRealms struct {
-	realms []users.QueryRes
-}
-
 type customClaims struct {
 	Username   string           `json:"username"`
 	Password   string           `json:"password"`
@@ -95,7 +91,7 @@ func Authenticate(request *http.Request) (dto.Response, dto.ErrorResponse) {
 
 	// check user in db
 	fromRequest := users.NewFromRequest(authRequest)
-	fromRequest.MapToUser().Auth(fromRequest.EndPoint)
+	auth := fromRequest.MapToUser().Auth(fromRequest.EndPoint)
 
 	if err != nil {
 		return dto.Response{}, dto.ErrorResponse{
@@ -103,14 +99,10 @@ func Authenticate(request *http.Request) (dto.Response, dto.ErrorResponse) {
 			ErrorMessage: err.Error(),
 		}
 	}
+	if auth {
 
-	//token, err := CreateToken(authRequest.Login, authRequest.Name, authRequest.Password)
-	if err != nil {
-		return dto.Response{}, dto.ErrorResponse{}
-	}
-
-	/*	var response dto.Response
-		if on {
+		var response dto.Response
+		if auth {
 			return encodeAuthResponse(authRequest, response)
 		} else {
 			return dto.Response{}, dto.ErrorResponse{
@@ -118,7 +110,13 @@ func Authenticate(request *http.Request) (dto.Response, dto.ErrorResponse) {
 				ErrorMessage: "You don't have right on realm",
 			}
 		}
-	*/
+
+	}
+
+	if err != nil {
+		return dto.Response{}, dto.ErrorResponse{}
+	}
+
 	return dto.Response{}, dto.ErrorResponse{
 		HttpStatus:   403,
 		ErrorMessage: "You don't have right on realm",

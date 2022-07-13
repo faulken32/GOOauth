@@ -3,20 +3,27 @@ package users
 import (
 	"GOOauth/Error"
 	"errors"
+	"golang.org/x/crypto/bcrypt"
+	"log"
 )
 
 type UserService interface {
 	ValidateIdentity(password string) (bool, *Error.UserError)
 }
 
-func (u User) ValidateIdentity(password string) (bool, *Error.UserError) {
+func (u User) ValidateIdentity(passwordToValidate string) (bool, *Error.UserError) {
 
-	if password == "" {
-		err := errors.New("no password provided")
+	if passwordToValidate == "" {
+		err := errors.New("no passwordToValidate provided")
 		return false, Error.NewUserError(err)
 	}
-	if u.Password == password {
-		return true, nil
+
+	byteHash := []byte(u.Password)
+	err := bcrypt.CompareHashAndPassword(byteHash, []byte(passwordToValidate))
+	if err != nil {
+		log.Println(err)
+		return false, Error.NewUserError(err)
 	}
-	return false, nil
+
+	return true, nil
 }

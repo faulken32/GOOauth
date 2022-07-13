@@ -22,7 +22,6 @@ package Utils
 import (
 	"flag"
 	"gopkg.in/yaml.v3"
-	"log"
 	"os"
 )
 
@@ -72,7 +71,7 @@ func ParseFlags(testEnv bool) (string, error) {
 func ReadConfig(testEnv bool) error {
 
 	flags, err := ParseFlags(testEnv)
-	log.Println(flags)
+
 	if err != nil {
 		return err
 	}

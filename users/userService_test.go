@@ -1,6 +1,7 @@
 package users
 
 import (
+	"GOOauth/Utils"
 	"GOOauth/myDB"
 	"context"
 	"github.com/stretchr/testify/assert"
@@ -57,17 +58,17 @@ func TestCreateOne(t *testing.T) {
 //
 //}
 //
-//func TestUser_ValidateIdentity(t *testing.T) {
-//
-//	TruncateTable()
-//	user := NewUser("nicolas", "nicolas", "nicolas@toto.com", "toto")
-//	user, _ = UserRepository.CreateOne(user)
-//	identity, userError := UserService.ValidateIdentity(user, "toto")
-//
-//	assert.Nil(t, userError)
-//	assert.True(t, identity)
-//
-//	identity, userError = UserService.ValidateIdentity(user, "")
-//	assert.False(t, identity)
-//	assert.Error(t, userError)
-//}
+func TestUser_ValidateIdentity(t *testing.T) {
+	Utils.ReadConfig(true)
+	TruncateTable()
+	user := NewUser("nicolas", "nicolas", "nicolas@toto.com", "toto")
+	user, _ = UserRepository.CreateOne(user)
+	identity, userError := UserService.ValidateIdentity(user, "toto")
+
+	assert.Nil(t, userError)
+	assert.True(t, identity)
+
+	identity, userError = UserService.ValidateIdentity(user, "")
+	assert.False(t, identity)
+	assert.Error(t, userError)
+}

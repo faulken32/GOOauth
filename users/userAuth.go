@@ -7,33 +7,24 @@ import (
 	"log"
 )
 
-// UserAuth interface
-type (
-	UserAuthRequest struct {
-		Login    string
-		Password string
-		EndPoint string
-	}
-	UserAuth interface {
-		MapToUser() User
-	}
-)
-
-func (u User) Auth(endPoint string) {
+func (u User) Auth(endPoint string) bool {
 
 	known := u.GetOneByLogin()
 
 	if known != nil {
-
 		validPass, err := UserService.ValidateIdentity(u, known.Password)
+
 		if validPass && err == nil {
 			on, err := u.asRightOn(endPoint)
 			Utils.CheckAndWarn(err)
 			if on {
-
+				return true
 			}
+		} else {
+			Utils.CheckAndWarn(err)
 		}
 	}
+	return false
 }
 
 func (u UserAuthRequest) MapToUser() User {

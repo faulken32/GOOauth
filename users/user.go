@@ -27,7 +27,7 @@ type (
 	UserRepository interface {
 		CreateOne() (*User, *Error.UserError)
 		GetOneByLogin() *User
-		GetUserRealm() string
+		GetUserRealm() ([]QueryRes, error)
 		TruncateTable()
 	}
 )

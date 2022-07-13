@@ -10,7 +10,16 @@ type (
 	}
 
 	Mapper interface {
-		MapToUser(request UserCreationRequest) User
+		MapToUser() User
+	}
+
+	UserAuthRequest struct {
+		Login    string
+		Password string
+		EndPoint string
+	}
+	UserAuth interface {
+		Auth(endPoint string) bool
 	}
 )
 

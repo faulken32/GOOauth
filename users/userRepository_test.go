@@ -1,17 +1,14 @@
 package users
 
 import (
+	"GOOauth/Utils"
 	"GOOauth/realms"
 	"log"
 	"testing"
 )
 
-func TestTruncate(t *testing.T) {
-
-	TruncateTable()
-}
-
 func TestUser_GetUserRealm(t *testing.T) {
+	Utils.ReadConfig(true)
 	TruncateTable()
 	user := NewUser("nicolas", "nicolas", "nicolas@toto.com", "toto")
 
