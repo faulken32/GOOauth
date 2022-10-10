@@ -50,6 +50,8 @@ func main() {
 	rtr.HandleFunc("/auth", authHandler)
 	rtr.HandleFunc("/private/user/create", userHandler)
 	rtr.HandleFunc("/private/realm/create", realmAddHandler)
+	rtr.HandleFunc("/private/realm/update", realmUpdateHandler)
+	rtr.HandleFunc("/private/realm/all", endpointsGetAll)
 	rtr.HandleFunc("/private/realm/add/user", realms.RealmAddUserHandler)
 
 	http.Handle("/", rtr)
@@ -58,6 +60,21 @@ func main() {
 	err = http.ListenAndServe(":8090", nil)
 
 	Utils.CheckAndDie(err)
+
+}
+
+func endpointsGetAll(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-type", "application/json;charset=UTF-8")
+	w.Header().Set("Access-Control-Allow-Origin", "*")
+
+	encoder := json.NewEncoder(w)
+	endpoint := realms.Endpoint{}
+	all, err := realms.EndPointsRepository(endpoint).FindAll()
+	err2 := encoder.Encode(all)
+	if err == nil || err2 == nil {
+		log.Println(err2, err)
+		return
+	}
 
 }
 
@@ -90,11 +107,27 @@ func authHandler(w http.ResponseWriter, r *http.Request) {
 // add a realm into Db
 func realmAddHandler(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-type", "application/json;charset=UTF-8")
+	w.Header().Set("Access-Control-Allow-Origin", "*")
 	reals := &realms.RealmCreationRequest{}
 	j := json.NewDecoder(r.Body)
 	err := j.Decode(reals)
 	Utils.CheckAndWarn(err)
 	realm, err := reals.MapToRealm().Save()
+
+	encoder := json.NewEncoder(w)
+	Utils.ReturnErrorOrHTTPResponse(w, err, encoder, realm)
+
+}
+
+func realmUpdateHandler(w http.ResponseWriter, r *http.Request) {
+
+	w.Header().Set("Content-type", "application/json;charset=UTF-8")
+	w.Header().Set("Access-Control-Allow-Origin", "*")
+	reals := &realms.RealmUpdateRequest{}
+	j := json.NewDecoder(r.Body)
+	err := j.Decode(reals)
+	Utils.CheckAndWarn(err)
+	realm, err := reals.MapToRealmForUpdate().Update()
 
 	encoder := json.NewEncoder(w)
 	Utils.ReturnErrorOrHTTPResponse(w, err, encoder, realm)

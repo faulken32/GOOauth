@@ -12,6 +12,20 @@ import (
 type EndPointsRepository interface {
 	FindById() (*Endpoint, error)
 	FindByUrl() (*Endpoint, error)
+	FindAll() (*[]Endpoint, error)
+}
+
+func (e Endpoint) FindAll() (*[]Endpoint, error) {
+	var model = &[]Endpoint{}
+	db := myDB.InitDb()
+	err := db.NewSelect().Order("id ASC").Model(model).Scan(context.Background(), model)
+
+	if err != nil {
+		log.Println(err)
+		return model, err
+	}
+	return model, nil
+
 }
 
 func (e Endpoint) FindById() (*Endpoint, error) {
@@ -22,6 +36,7 @@ func (e Endpoint) FindById() (*Endpoint, error) {
 		if err != nil {
 			return &Endpoint{}, err
 		}
+		defer db.Close()
 		return model, nil
 	}
 
@@ -36,6 +51,7 @@ func (e Endpoint) FindByUrl() (*Endpoint, error) {
 		if err != nil {
 			return &Endpoint{}, err
 		}
+		defer db.Close()
 		return model, nil
 	}
 
@@ -50,6 +66,7 @@ func (e Endpoint) FindByUri() (*Endpoint, error) {
 		if err != nil {
 			return &Endpoint{}, err
 		}
+		defer db.Close()
 		return model, nil
 	}
 
@@ -66,7 +83,22 @@ func (e Endpoint) TruncateTable() {
 		log.Println(err)
 		return
 	}
+	defer db.Close()
 
+}
+
+func (e Endpoint) Update() (*Endpoint, error) {
+
+	ctx := context.Background()
+	db := myDB.InitDb()
+	log.Println(e)
+	exec, err := db.NewUpdate().Where("id = ?", e.ID).Model(&e).Exec(ctx)
+	if err != nil {
+		log.Println(exec)
+		return &Endpoint{}, err
+	}
+
+	return &e, nil
 }
 
 func (e Endpoint) Save() (*Endpoint, error) {
